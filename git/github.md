@@ -57,6 +57,8 @@ HEAD～n：第前n个版本
 误删还原：git checkout -- test.txt
 14. 创建ssh
 >ssh-keygen -t rsa -C "youremail@example.com"
+
+
 15. 将本地仓库推到github
 关联远程仓库
 >git remote add origin git@github.com:Spirit-style/OS.git
@@ -88,8 +90,103 @@ git push -u origin master
 >git merge dev 合并指定分支到当前分支
 20. 删除分支
 >git branch -d dev
-21. 
+21. 合并分支冲突
+当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。
 Git用<<<<<<<，=======，>>>>>>>标记出不同分支的内容
+>git log --graph --pretty=oneline --abbrev-commit 查看分支合并情况
+>it log --graph 查看分支合并图
+![](./3.png)
+22. 强制禁用Fast forward
+> git merge --no-ff -m "merge with no-ff" dev
+23. 存储现场和恢复现场 stash
+>git stash
+>git stash list 查看存储的现场
+恢复
+>git stash apply
+>git stash drop //删除回复后的stash内容
+或
+>git stash pop //恢复的同时把stash内容也删了
+恢复指定现场
+>git stash apply stash@{0}
+24. feature 分支
+每个新功能一个分支
+删除未合并的分支：
+> git branch -D name
+25. 查看远程库的信息
+>git remote
+>git remote -v
+推送分支
+>git push origin dev
+26. 抓取分支
+本地创建和远程分支对应的分支：
+>git checkout -b dev origin/dev
+抓取远程最新提交的分支：
+>git branch --set-upstream-to=origin/dev dev 指定本地分支与远程分支的链接
+>git pull 抓取远程分支
+
+27. 多人协作的工作模式通常是：
+    首先，可以试图用git push origin <branch-name>推送自己的修改；
+    如果推送失败，则因为远程分支比你的本地更新，需要先用git pull试图合并；
+    如果合并有冲突，则解决冲突，并在本地提交；
+    没有冲突或者解决掉冲突后，再用git push origin <branch-name>推送就能成功！
+git pull提示no tracking information，则说明本地分支和远程分支的链接关系没有创建，用命令:
+>git branch --set-upstream-to <branch-name> origin/<branch-name>。
+28. Rebase
+将分叉提交转变为直线提交
+>git rebase
+rebase操作的特点：把分叉的提交历史“整理”成一条直线，看上去更直观。缺点是本地的分叉提交已经被修改过了。
+rebase操作可以把本地未push的分叉提交历史整理成直线；
+rebase的目的是使得我们在查看历史提交的变化时更容易，因为分叉的提交需要三方对比。
+29. 标签
+创建标签：``git tag name``
+查看所有标签：``git tag``
+给历史提交打标签：
+>git log --pretty=oneline --abbrev-commit  查看历史提交
+>git tag name commit_id
+查看标签信息：``git show <tagname>``
+创建带有说明的标签，用-a指定标签名，-m指定说明文字:``git tag -a v0.1 -m "version 0.1 released" 1094adb``
+查看说明文字：``git show <tagname> ``
+删除标签：``git tag -d v0.1``
+**创建的标签都只存储在本地，不会自动推送到远程。**
+推送某个标签到远程，使用命令:``git push origin <tagname>``
+一次性推送全部尚未推送到远程的本地标签：``git push origin --tags``
+删除远程标签:
+      先删除本地标签：``git tag -d v0.9``
+      再删除远程标签：`` git push origin :refs/tags/<tagname>``
+30. Tips
+某些文件放到Git工作目录中，但又不提交它们,在Git工作区的根目录下创建一个特殊的.gitignore文件，然后把要忽略的文件名填进去，Git就会自动忽略这些文件。https://github.com/github/gitignore
+忽略文件的原则是：
+    忽略操作系统自动生成的文件，比如缩略图等；
+    忽略编译生成的中间文件、可执行文件等，也就是如果一个文件是通过另一个文件自动生成的，那自动生成的文件就没必要放进版本库，比如Java编译产生的.class文件；
+    忽略你自己的带有敏感信息的配置文件，比如存放口令的配置文件。
+```
+# Windows:
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Python:
+*.py[cod]
+*.so
+*.egg
+*.egg-info
+dist
+build
+
+# My configurations:
+db.ini
+deploy_key_rsa
+```
+添加.gitignore之后强制添加到git：`` git add -f App.class``
+检查.gitignore文件：``git check-ignore``
+
+命令取别名：`` git config --global alias.st status ``将st代替status
+``git config --global alias.co checkout``
+``git config --global alias.ci commit``
+``git config --global alias.br branch``
+``git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"``
+当前用户的Git配置文件放在用户主目录下的一个隐藏文件.gitconfig
+
 
 ```
 
@@ -98,8 +195,8 @@ Git用<<<<<<<，=======，>>>>>>>标记出不同分支的内容
    切换分支：git checkout <name>
    创建+切换分支：git checkout -b <name>
    合并某分支到当前分支：git merge <name>
+   删除分支：git branch -d <name>
 
-删除分支：git branch -d <name>
 开始一个工作区（参见：git help tutorial）
    clone      克隆一个仓库到一个新目录
    init       创建一个空的 Git 仓库或重新初始化一个已存在的仓库
@@ -131,3 +228,12 @@ Git用<<<<<<<，=======，>>>>>>>标记出不同分支的内容
    pull       获取并整合另外的仓库或一个本地分支
    push       更新远程引用和相关的对象
 ```
+
+错误：
+(base) lz@Zeng-Ubuntu:~/vscode/Note$ git pull
+fatal: 拒绝合并无关的历史
+解决：
+>git pull origin master --allow-unrelated-histories 忽略版本不同造成的影响
+
+命令汇总图
+![](./5.png)
