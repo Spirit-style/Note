@@ -1,0 +1,26 @@
+1.用 shell 命令查看 Linux 文件类型。
+#ls -al
+思考:Linux 文件类型有哪些?用什么符号表示。
+
+        普通文件    -
+        目录文件    d
+        硬链接文件   l    ln命令产生
+        符号链接文件       ln -s
+        套接字文件   s
+        有名管道文件  p     mknod
+        字符设备文件  c
+        块设备文件   b
+
+2. 用 shell 命令了解 Linux 文件系统的目录结构
+lz@Zeng-Ubuntu:/lib$ ls -l|more
+3. 用命令分别建立硬链接文件和符号链接文件。通过 ls –il 命令所示的 inode、链接
+       ln /home/lz/vscode/cpp/test.cpp mytest.cpp 硬连接
+       ln -s /home/lz/vscode/cpp/test.cpp mytest2.cpp 软连接
+
+       lrwxrwxrwx 1 lz lz    28 Jan 11 11:31 mytest2.cpp -> /home/lz/vscode/cpp/test.cpp
+       -rw-rw-r-- 2 lz lz  1164 Jan 11 10:02 mytest.cpp
+4. 复习 Unix 或 Linux 文件目录信息 i 节点的概念。编程察看指定文件的 inode 信息。
+例程 8:获得 Inode 信息实验
+/*利用 lstat() 系统调用获得 inode 信息。假定本程序文件名为 getiinfo.o 则执行程序,获得 filename 文件的 inode
+信息的命令格式如下 ./getiinfo.o filename */
+    
